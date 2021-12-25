@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/mitchellh/go-homedir"
@@ -34,10 +35,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	cmdhome := filepath.Join(DXHome, "cmd")
-	nameSpaces[cmdhome] = RootCmd
+	var commandDir string
 
-	if err := createCommands(cmdhome); err != nil {
+	osCommandDir := filepath.Join(DXHome, fmt.Sprintf("%s_cmd", runtime.GOOS))
+	crossPlatformCommandDir := filepath.Join(DXHome, "cmd")
+
+	if fileExists(osCommandDir) {
+		commandDir = osCommandDir
+	} else if fileExists(crossPlatformCommandDir) {
+		commandDir = crossPlatformCommandDir
+	} else {
+		fmt.Fprintln(os.Stderr, "ERROR: Command directory not found in either of: ", osCommandDir, crossPlatformCommandDir)
+		os.Exit(1)
+	}
+
+	nameSpaces[commandDir] = RootCmd
+
+	if err := createCommands(commandDir); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
@@ -60,7 +74,7 @@ func GetDXHome() string {
 	}
 
 	// Otherwise prefer a DXHome in the current directory
-	if _, err := os.Stat("./DXHome"); !os.IsNotExist(err) {
+	if fileExists("./DXHome") {
 		return "./DXHome"
 	}
 
@@ -71,7 +85,7 @@ func GetDXHome() string {
 		os.Exit(1)
 	}
 
-	if _, err := os.Stat(filepath.Join(home, "DXHome")); !os.IsNotExist(err) {
+	if fileExists(filepath.Join(home, "DXHome")) {
 		return filepath.Join(home, "DXHome")
 	}
 
@@ -138,4 +152,13 @@ func createCommands(dxhome string) error {
 		})
 
 	return err
+}
+
+func fileExists(path string) bool {
+
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		return true
+	}
+
+	return false
 }
