@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -109,13 +109,12 @@ func createCommands(dxhome string) error {
 			base := filepath.Base(path)
 			namespace := filepath.Dir(path)
 
-			log.Printf("base = '%s'\n", base)
-
 			if info.IsDir() {
 				// Directories, create name spaces in the command tree
 				cmd = &cobra.Command{Use: base}
 				nameSpaces[path] = cmd
 			} else {
+
 				cmd = &cobra.Command{
 					Use: base,
 					Run: func(cmd *cobra.Command, args []string) {
@@ -137,6 +136,20 @@ func createCommands(dxhome string) error {
 							return
 						}
 					},
+				}
+
+				var commandMetaFile = filepath.Join(namespace, fmt.Sprintf("_meta_%s.json", base))
+
+				if fileExists(commandMetaFile) {
+					var byt []byte
+
+					if byt, err = os.ReadFile(commandMetaFile); err != nil {
+						panic(err)
+					}
+
+					if err = json.Unmarshal(byt, cmd); err != nil {
+						panic(err)
+					}
 				}
 			}
 
