@@ -27,6 +27,23 @@ There are only a few things to know about the contents of DXHome:
   * Folders and files inside cmd that start with an underscore are ignored (eg cmd/_lib to house shared functions in your shell scripts)
   * $DXHOME is set (eg so you can "source $DXHOME/utils.sh" or cat $DXHOME/README.me) for commands
   * DXHome can contain anything else you might need (Docs, config files, etc)
+  * $GOOS_cmd can be used as the command folder to provide platform specific set of commands (eg for Windows, note this overrides cmd)
+
+Commands can have options specified for them by creating a json file int he same directory as the command. This should help make the dev tools you are running be self describing. The file will be named _meta_COMMANDNAME.json.  The format should be as follows (each is optional):
+
+```
+{
+  "use": "cmd --usage --flags --etc",
+  "short": "Short description that is displayed in the list of commands",
+  "long": "Block of text shown when dx <command> --help is run",
+  "aliases": ["an", "array", "of", "alt", "names"],
+  "example": "a string that shows an example of running command"
+}
+```
+
+## Examples
+
+TBD
 
 ## Building
 
