@@ -29,7 +29,7 @@ There are only a few things to know about the contents of DXHome:
   * DXHome can contain anything else you might need (Docs, config files, etc)
   * $GOOS_cmd can be used as the command folder to provide platform specific set of commands (eg for Windows, note this overrides cmd)
 
-Commands can have options specified for them by creating a json file int he same directory as the command. This should help make the dev tools you are running be self describing. The file will be named _meta_COMMANDNAME.json.  The format should be as follows (each is optional):
+Commands can have options specified for them by creating a json file int he same directory as the command. This should help make the dev tools you are running be self documenting. The file will be named _meta_COMMANDNAME.json.  The format should be as follows (each is optional):
 
 ```
 {
