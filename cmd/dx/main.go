@@ -19,9 +19,9 @@ var nameSpaces map[string]*cobra.Command
 var DXHome string
 
 var RootCmd = &cobra.Command{
-	Use:    		    "dx",
-	Version: 			Version,
-	Long:    		    "Simple command runner/automation tool for a better developer experience",
+	Use:                "dx",
+	Version:            Version,
+	Long:               "Simple command runner/automation tool for a better developer experience",
 	DisableFlagParsing: true,
 }
 
