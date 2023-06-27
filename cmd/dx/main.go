@@ -124,7 +124,9 @@ func createCommands(dxhome string) error {
 
 						err := syscall.Exec(path, args, env)
 						// We don't expect this to ever return; if it does something is really wrong
-						os.panic(err)
+						if err != nil {
+							panic(err)
+						}
 					},
 				}
 
