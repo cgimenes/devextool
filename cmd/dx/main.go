@@ -22,7 +22,6 @@ var RootCmd = &cobra.Command{
 	Use:                "dx",
 	Version:            Version,
 	Long:               "Simple command runner/automation tool for a better developer experience",
-	DisableFlagParsing: true,
 }
 
 func main() {
@@ -118,6 +117,7 @@ func createCommands(dxhome string) error {
 
 				cmd = &cobra.Command{
 					Use: base,
+					DisableFlagParsing: true,
 					Run: func(cmd *cobra.Command, args []string) {
 						// make sure DXHOME is set so scripts can use it (for sourcing, docs, configs etc).
 						env := append(os.Environ(), fmt.Sprintf("DXHOME=%s", DXHome))
