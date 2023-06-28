@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"syscall"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -19,9 +19,10 @@ var nameSpaces map[string]*cobra.Command
 var DXHome string
 
 var RootCmd = &cobra.Command{
-	Use:     "dx",
-	Version: Version,
-	Long:    "Simple command runner/automation tool for a better developer experience",
+	Use:                "dx",
+	Version:            Version,
+	Long:               "Simple command runner/automation tool for a better developer experience",
+	DisableFlagParsing: true,
 }
 
 func main() {
@@ -118,22 +119,14 @@ func createCommands(dxhome string) error {
 				cmd = &cobra.Command{
 					Use: base,
 					Run: func(cmd *cobra.Command, args []string) {
-
-						// Run the command pointed at by path and pass any additional arguments to it
-						c := exec.Command(path, args...)
-						c.Stdout = os.Stdout
-						c.Stderr = os.Stderr
-
 						// make sure DXHOME is set so scripts can use it (for sourcing, docs, configs etc).
-						c.Env = append(os.Environ(),
-							fmt.Sprintf("DXHOME=%s", DXHome),
-						)
+						env := append(os.Environ(), fmt.Sprintf("DXHOME=%s", DXHome))
 
-						err := c.Run()
-
+						args = append([]string{path}, args...)
+						err := syscall.Exec(path, args, env)
+						// We don't expect this to ever return; if it does something is really wrong
 						if err != nil {
-							fmt.Println(err.Error())
-							return
+							panic(err)
 						}
 					},
 				}
