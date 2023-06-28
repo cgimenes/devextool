@@ -122,6 +122,7 @@ func createCommands(dxhome string) error {
 						// make sure DXHOME is set so scripts can use it (for sourcing, docs, configs etc).
 						env := append(os.Environ(), fmt.Sprintf("DXHOME=%s", DXHome))
 
+						args = append([]string{path}, args...)
 						err := syscall.Exec(path, args, env)
 						// We don't expect this to ever return; if it does something is really wrong
 						if err != nil {
